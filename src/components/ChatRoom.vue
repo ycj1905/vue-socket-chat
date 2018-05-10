@@ -1,0 +1,329 @@
+<template>
+  <div class="chat">
+    <div class="chat__sidebar">
+      <h3>People</h3>
+      <div id="users" >
+        <ol>
+          <li v-for="user in users">
+            {{user}}
+          </li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="chat__main">
+      <ol id="messages" class="chat__messages"></ol>
+
+      <div v-if="msgList.length">
+        <ul v-for="msg in msgList" class="message">
+          <div class="message__title">
+            <h4>{{msg.from}}</h4>
+            <span>{{msg.createdAt | time}}</span>
+          </div>
+          <div>
+            <p>{{msg.text}}</p>
+          </div>
+        </ul>
+      </div>
+
+    
+    <!-- <ol id="messages" class="chat__messages"></ol> -->
+      <div class="chat__footer">
+        <div id="message-form" class="form">
+          <input name="message" type="text" v-model="message.text" placeholder="Message" v-focus autocomplete="off"/>
+          <button @click="createMessage">Send</button>
+        </div>
+        <!-- <button id="send-location">Send location</button> -->
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import moment from 'moment';
+
+export default {
+  data() {
+    return {
+      users: null,
+      message: {
+        text: ""
+      },
+      msgList: []
+    };
+  },
+  methods: {
+    // ...mapActions([
+    //     'connect',
+    //     'createMessage'
+    // ]),
+    createMessage() {
+      if (!!this.message.text) {
+        this.$socket.emit("createMessage", this.message, () => {
+          this.message.text = null;
+        });
+      }
+    }
+  },
+  // computed: {
+  //   status() {
+  //     return this.$store.getters.status;
+  //   }
+  // },
+  sockets: {
+    updateUserList(s){
+      console.error('updateUserList: ', s)
+      this.users = s;
+    },
+    newMessage(s){
+      console.error("newMessage", s);
+      this.msgList.push(s);
+      console.error("msgList", this.msgList);
+    }
+  },
+  directives: {
+    focus: {
+      inserted: function (el) {
+        el.focus()
+      }
+    }
+  },
+  // created() {
+  //   this.$socket.on("updateUserList", s => {
+  //     console.error('beforeCreate updateUserList: ', s)
+  //     this.users = s;
+  //   });
+  // }
+  filters: {
+    time: function(timestamp) {
+      console.log('timestamp: ', timestamp)
+      if (!timestamp) return '';
+      var date = new Date(timestamp);
+      return moment(date).format('hh:mm A')
+    },
+    moment: function (date) {
+      return moment(date).format('MMMM Do YYYY, h:mm:ss a');
+    }
+  }
+};
+</script>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped>
+button,
+button:hover {
+  border: none;
+  color: #fff;
+  padding: 10px;
+}
+.chat__messages,
+.chat__sidebar ul {
+  list-style-type: none;
+}
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: HelveticaNeue-Light, "Helvetica Neue Light", "Helvetica Neue",
+    Helvetica, Arial, "Lucida Grande", sans-serif;
+  font-weight: 300;
+  font-size: 0.95rem;
+}
+li,
+ul {
+  list-style-position: inside;
+}
+h3 {
+  font-weight: 600;
+  text-align: center;
+  font-size: 1.5rem;
+}
+button {
+  background: #265f82;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+button:hover {
+  background: #1f4c69;
+}
+button:disabled {
+  cursor: default;
+  background: #698ea5;
+}
+.centered-form {
+  display: flex;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+  justify-content: center;
+  background: -moz-linear-gradient(
+    125deg,
+    rgba(39, 107, 130, 1) 0,
+    rgba(49, 84, 129, 1) 100%
+  );
+  background: -webkit-gradient(
+    linear,
+    left top,
+    right bottom,
+    color-stop(0, rgba(49, 84, 129, 1)),
+    color-stop(100%, rgba(39, 107, 130, 1))
+  );
+  background: -webkit-linear-gradient(
+    125deg,
+    rgba(39, 107, 130, 1) 0,
+    rgba(49, 84, 129, 1) 100%
+  );
+  background: -o-linear-gradient(
+    125deg,
+    rgba(39, 107, 130, 1) 0,
+    rgba(49, 84, 129, 1) 100%
+  );
+  background: -ms-linear-gradient(
+    125deg,
+    rgba(39, 107, 130, 1) 0,
+    rgba(49, 84, 129, 1) 100%
+  );
+  background: linear-gradient(
+    325deg,
+    rgba(39, 107, 130, 1) 0,
+    rgba(49, 84, 129, 1) 100%
+  );
+}
+.centered-form__form {
+  background: rgba(250, 250, 250, 0.9);
+  border: 1px solid #e1e1e1;
+  border-radius: 5px;
+  padding: 0 20px;
+  margin: 20px;
+  width: 230px;
+}
+.form-field {
+  margin: 20px 0;
+}
+.form-field > * {
+  width: 100%;
+}
+.form-field label {
+  display: block;
+  margin-bottom: 7px;
+}
+.form-field input,
+.form-field select {
+  border: 1px solid #e1e1e1;
+  padding: 10px;
+}
+.chat {
+  display: flex;
+}
+.chat__sidebar {
+  overflow-y: scroll;
+  width: 260px;
+  height: 100vh;
+  background: -moz-linear-gradient(
+    125deg,
+    rgba(39, 107, 130, 1) 0,
+    rgba(49, 84, 129, 1) 100%
+  );
+  background: -webkit-gradient(
+    linear,
+    left top,
+    right bottom,
+    color-stop(0, rgba(49, 84, 129, 1)),
+    color-stop(100%, rgba(39, 107, 130, 1))
+  );
+  background: -webkit-linear-gradient(
+    125deg,
+    rgba(39, 107, 130, 1) 0,
+    rgba(49, 84, 129, 1) 100%
+  );
+  background: -o-linear-gradient(
+    125deg,
+    rgba(39, 107, 130, 1) 0,
+    rgba(49, 84, 129, 1) 100%
+  );
+  background: -ms-linear-gradient(
+    125deg,
+    rgba(39, 107, 130, 1) 0,
+    rgba(49, 84, 129, 1) 100%
+  );
+  background: linear-gradient(
+    325deg,
+    rgba(39, 107, 130, 1) 0,
+    rgba(49, 84, 129, 1) 100%
+  );
+}
+.chat__footer,
+.chat__sidebar li {
+  background: #e6eaee;
+  padding: 10px;
+}
+.chat__sidebar h3 {
+  color: #e6eaee;
+  margin: 10px 20px;
+  text-align: left;
+}
+.chat__sidebar li {
+  border: 1px solid #e1e1e1;
+  border-radius: 5px;
+  margin: 10px;
+}
+.chat__main {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100%;
+}
+.chat__messages {
+  flex-grow: 1;
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+  padding: 10px;
+}
+.chat__footer {
+  display: flex;
+  flex-shrink: 0;
+}
+.chat__footer .form {
+  flex-grow: 1;
+  display: flex;
+}
+.chat__footer form * {
+  margin-right: 10px;
+}
+.chat__footer input {
+  border: none;
+  padding: 10px;
+  flex-grow: 1;
+}
+.message {
+  padding: 10px;
+}
+.message__title {
+  display: flex;
+  margin-bottom: 5px;
+}
+.message__title h4 {
+  font-weight: 600;
+  margin-right: 10px;
+}
+.message__title span {
+  color: #999;
+}
+@media (max-width: 600px) {
+  * {
+    font-size: 1rem;
+  }
+  .chat__sidebar {
+    display: none;
+  }
+  .chat__footer {
+    flex-direction: column;
+  }
+  .chat__footer form {
+    margin-bottom: 10px;
+  }
+  .chat__footer button {
+    margin-right: 0;
+  }
+}
+</style>
