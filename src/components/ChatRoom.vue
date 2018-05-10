@@ -72,13 +72,10 @@ export default {
   // },
   sockets: {
     updateUserList(s){
-      console.error('updateUserList: ', s)
       this.users = s;
     },
     newMessage(s){
-      console.error("newMessage", s);
       this.msgList.push(s);
-      console.error("msgList", this.msgList);
     }
   },
   directives: {
@@ -96,7 +93,6 @@ export default {
   // }
   filters: {
     time: function(timestamp) {
-      console.log('timestamp: ', timestamp)
       if (!timestamp) return '';
       var date = new Date(timestamp);
       return moment(date).format('hh:mm A')

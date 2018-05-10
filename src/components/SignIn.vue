@@ -39,7 +39,6 @@ export default {
         room: this.chatRoom
       };
       this.$socket.emit("join", param, () => {
-        // console.error('hi')
         this.$router.push("/chatroom");
       });
     }
