@@ -9,7 +9,10 @@ import socketio from 'socket.io-client';
 import {store} from './store/store'
 
 Vue.config.productionTip = false
-Vue.use(VueSocketio, socketio('http://localhost:3000'));
+// Vue.use(VueSocketio, socketio('http://localhost:3000'));
+// Vue.use(VueSocketio, socketio('http://192.168.110.104:8010/gs-guide-websocket'));
+Vue.use(VueSocketio, socketio('http://192.168.110.104:8080/gs-guide-websocket'));
+// Vue.use(VueSocketio, socketio('http://192.168.110.104:8010'));
 // Vue.use(VueSocketio, 'http://localhost:3000', store);
 
 /* eslint-disable no-new */

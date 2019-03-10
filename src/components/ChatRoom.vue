@@ -59,6 +59,7 @@ export default {
     // ]),
     createMessage() {
       if (!!this.message.text) {
+        console.log('createMessage')
         this.$socket.emit("createMessage", this.message, () => {
           this.message.text = null;
         });

@@ -34,13 +34,18 @@ export default {
   },
   methods: {
     connect() {
-      var param = {
-        name: this.userName,
-        room: this.chatRoom
-      };
-      this.$socket.emit("join", param, () => {
-        this.$router.push("/chatroom");
-      });
+      // var param = {
+      //   name: this.userName,
+      //   room: this.chatRoom
+      // };
+      // this.$socket.emit("join", param, () => {
+      //   this.$router.push("/chatroom");
+      // });
+      // this.$socket.emit("", )
+      console.log('/topic/greetings ~');
+        this.$socket.on("/topic/greetings", s => {
+          console.error('/topic/greetings ', s)
+        });
     }
   },
   computed: {}
